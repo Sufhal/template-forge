@@ -1,9 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-  </head>
-  <body></body>
+<head>
+    <meta charset="UTF-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Forge</title>
+    <link href="assets/style.css" rel="stylesheet">
+</head>
+<body>
+<h1>Axum WebSocket Chat</h1>
+<div class="chat-box" id="messages"></div>
+<div class="input-container">
+    <label for="messageInput"></label><input id="messageInput" placeholder="Type a message..." type="text"/>
+</div>
+<p>Status: <span id="status">Disconnected</span></p>
+<script src="assets/app.js" type="module"></script>
+</body>
 </html>

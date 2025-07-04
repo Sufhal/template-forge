@@ -1,13 +1,12 @@
-use std::{collections::HashMap, marker::PhantomData, path::PathBuf};
 use handlebars::{DirectorySourceOptions, Handlebars};
 use serde::Serialize;
+use std::{collections::HashMap, path::PathBuf};
 
 use crate::{errors::ForgeError, forge::template::ForgeTemplate};
 
-pub struct Forge<'a, T: Serialize, S: ToString> {
-    hbs: Handlebars<'a>,
+pub struct Forge<S: ToString> {
+    hbs: Handlebars<'static>,
     templates: HashMap<String, ForgeTemplate<S>>,
-    _phantom_t: PhantomData<T>
 }
 
 pub struct ForgeConfig {
@@ -18,26 +17,24 @@ pub struct ForgeConfig {
     pub preview: bool,
 }
 
-impl<'a, T: Serialize, S: ToString> Forge<'a, T, S> {
-
+impl<S: ToString> Forge<S> {
     pub fn new(config: ForgeConfig) -> Result<Self, ForgeError> {
         let mut hbs = Handlebars::new();
-        
+
         if config.preview {
             hbs.set_dev_mode(true);
         }
 
         hbs
             .register_templates_directory(
-                config.components_dir_path, 
-                config.components_dir_options
+                config.components_dir_path,
+                config.components_dir_options,
             )
             .map_err(|e| ForgeError::TemplateError(e))?;
 
-        Ok(Self { 
+        Ok(Self {
             hbs,
             templates: HashMap::new(),
-            _phantom_t: PhantomData
         })
     }
 
@@ -49,12 +46,17 @@ impl<'a, T: Serialize, S: ToString> Forge<'a, T, S> {
         Ok(())
     }
 
-    pub fn get_handlebars(&'a mut self) -> &'a mut Handlebars<'a> {
+    pub fn get_templates(&self) -> Vec<String> {
+        self.templates.iter().map(|(key, _)| key.to_string()).collect()
+    }
+
+    pub fn get_handlebars(&mut self) -> &mut Handlebars<'static> {
         &mut self.hbs
     }
 
-    pub fn render(&self, template_name: &S, data: &T) -> Result<String, ForgeError> 
-        where T: Serialize
+    pub fn render<T>(&self, template_name: &S, data: &T) -> Result<String, ForgeError>
+    where
+        T: Serialize,
     {
         let template_name = template_name.to_string();
         let name = template_name.as_str();
@@ -64,5 +66,4 @@ impl<'a, T: Serialize, S: ToString> Forge<'a, T, S> {
 
         Ok(output)
     }
-
 }

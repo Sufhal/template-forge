@@ -6,9 +6,10 @@ pub mod errors;
 mod forge;
 mod server;
 
-pub use forge::forge::{Forge,ForgeConfig};
+pub use forge::forge::{Forge, ForgeConfig};
 pub use forge::template::ForgeTemplate;
 pub use handlebars;
+pub use server::server::Server;
 
 #[cfg(test)]
 mod tests {
