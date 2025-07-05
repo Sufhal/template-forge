@@ -2,6 +2,10 @@
 name = "template-forge"
 version = "0.1.0"
 edition = "2024"
+readme = "README.md"
+repository = "https://github.com/Sufhal/template-forge"
+description = "Production ready email template generation on top of Handlebars"
+license = "MIT"
 
 [features]
 default = []
