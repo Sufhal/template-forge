@@ -6,11 +6,9 @@ use crate::components::{
 };
 
 #[derive(Serialize, Default, Clone)]
-pub struct EmailValidationData {
+pub struct PasswordResetData {
     layout_begin: LayoutBeginData,
     title: TitleData,
     paragraph_1: ParagraphData,
-    paragraph_2: ParagraphData,
-    paragraph_3: ParagraphData,
     main_button: MainButtonData,
 }

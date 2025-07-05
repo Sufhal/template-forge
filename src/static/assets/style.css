@@ -20,3 +20,48 @@ body {
     min-height: 100vh;
     background: #151515;
 }
+
+#root {
+    position: relative;
+    height: 100vh;
+    width: 100%;
+}
+
+#renderer {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 100vh;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 1rem;
+}
+
+iframe {
+    height: 100%;
+    width: 100%;
+    border: 0;
+    border-radius: 0.5rem;
+}
+
+#controls {
+    position: absolute;
+    z-index: 2;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    background: rgba(127, 127, 127, 0.5);
+    backdrop-filter: blur(10px);
+    border: 0;
+}
+
+select {
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 0.5rem;
+    color: white;
+}

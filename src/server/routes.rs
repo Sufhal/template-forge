@@ -4,16 +4,25 @@ use axum::extract::{State, WebSocketUpgrade};
 use axum::response::{IntoResponse, Response};
 use axum::{response::Html, routing::get, Json, Router};
 use std::sync::Arc;
+use serde::Serialize;
 use tokio::sync::{broadcast, RwLock};
 use tower_http::services::ServeDir;
 
 
-pub struct AppState<T: ToString + Send + Sync + 'static> {
+pub struct AppState<T, S>
+where
+    T: ToString + Send + Sync + 'static,
+    S: Serialize + Send + Sync + 'static,
+{
     pub tx: broadcast::Sender<String>,
-    pub forge: Arc<RwLock<Forge<T>>>,
+    pub forge: Arc<RwLock<Forge<T, S>>>,
 }
 
-impl<'a, T: ToString + Send + Sync + 'static> Clone for AppState<T> {
+impl<'a, T, S> Clone for AppState<T, S>
+where
+    T: ToString + Send + Sync + 'static,
+    S: Serialize + Send + Sync + 'static,
+{
     fn clone(&self) -> Self {
         AppState {
             tx: self.tx.clone(),
@@ -22,7 +31,11 @@ impl<'a, T: ToString + Send + Sync + 'static> Clone for AppState<T> {
     }
 }
 
-pub fn create_router<'a, T: ToString + Send + Sync + 'static>(state: AppState<T>) -> Router {
+pub fn create_router<'a, T, S>(state: AppState<T, S>) -> Router
+where
+    T: ToString + Send + Sync + 'static,
+    S: Serialize + Send + Sync + 'static,
+{
     Router::new()
         .route("/", get(index_handler))
         .nest_service("/assets", assets_handler())
@@ -38,12 +51,13 @@ fn assets_handler() -> ServeDir {
     ServeDir::new("./src/static/assets")
 }
 
-pub async fn websocket_handler<'a, T>(
+pub async fn websocket_handler<'a, T, S>(
     ws: WebSocketUpgrade,
-    State(state): State<Arc<AppState<T>>>,
+    State(state): State<Arc<AppState<T, S>>>,
 ) -> Response
 where
     T: ToString + Send + Sync + 'static,
+    S: Serialize + Send + Sync + 'static,
 {
     let state_clone = Arc::clone(&state);
 
@@ -52,7 +66,11 @@ where
     })
 }
 
-async fn get_templates_handler<'a, T: ToString + Send + Sync + 'static>(State(state): State<Arc<AppState<T>>>) -> impl IntoResponse {
+async fn get_templates_handler<'a, T, S>(State(state): State<Arc<AppState<T, S>>>) -> impl IntoResponse
+where
+    T: ToString + Send + Sync + 'static,
+    S: Serialize + Send + Sync + 'static,
+{
     let forge = state.forge.read().await;
     let templates = forge.get_templates();
     Json(templates)

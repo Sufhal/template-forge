@@ -3,6 +3,7 @@ use crate::server::watcher::watch;
 use crate::Forge;
 use std::path::PathBuf;
 use std::sync::Arc;
+use serde::Serialize;
 use tokio::net::TcpListener;
 use tokio::sync::{broadcast, RwLock};
 use tracing::{error, info};
@@ -10,7 +11,11 @@ use tracing::{error, info};
 pub struct Server {}
 
 impl Server {
-    pub async fn run<T: ToString + Send + Sync + 'static>(watch_path: PathBuf, forge: Forge<T>) -> Result<(), ServerError> {
+    pub async fn run<T, S>(watch_path: PathBuf, forge: Forge<T, S>) -> Result<(), ServerError>
+        where
+            T: ToString + Send + Sync + 'static,
+            S: Serialize + Send + Sync + 'static,
+    {
         let (tx, _rx) = broadcast::channel(100);
         let state = AppState {
             tx: tx.clone(),

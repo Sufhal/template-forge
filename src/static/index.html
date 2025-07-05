@@ -7,12 +7,17 @@
     <link href="assets/style.css" rel="stylesheet">
 </head>
 <body>
-<h1>Axum WebSocket Chat</h1>
-<div class="chat-box" id="messages"></div>
-<div class="input-container">
-    <label for="messageInput"></label><input id="messageInput" placeholder="Type a message..." type="text"/>
+<div id="root">
+    <div id="controls">
+        <select id="templates-select"></select>
+        <select id="viewport-select">
+            <option value="Mobile">Mobile</option>
+            <option value="Tablet">Tablet</option>
+            <option selected value="Desktop">Desktop</option>
+        </select>
+    </div>
+    <div id="renderer"></div>
 </div>
-<p>Status: <span id="status">Disconnected</span></p>
 <script src="assets/app.js" type="module"></script>
 </body>
 </html>
